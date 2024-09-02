@@ -129,20 +129,29 @@ def create_prompt_with_marathi_gpt_format(messages, bos="<bos>", eos="<eos>", ad
 
 def create_prompt_with_alpaca_template(messages, bos="<bos>", eos="<eos>", add_bos=True):
     formatted_text = ""
+    instruction = ""
+    input_text = ""
     for message in messages:
         if message["role"] == "system":
             # Skip system message as per your example
             continue
         elif message["role"] == "user":
-            formatted_text += f"### Instruction:\n{message['content']}\n\n### Input:\n"
+            instruction = message["content"]
         elif message["role"] == "assistant":
-            formatted_text += f"\n### Response:\n"
+            # For evaluation, just mark the place for the response
+            input_text = ""
         else:
             raise ValueError(
-                "Custom template only supports 'system', 'user', and 'assistant' roles. Invalid role: {}.".format(
+                "Alpaca template only supports 'system', 'user', and 'assistant' roles. Invalid role: {}.".format(
                     message["role"]
                 )
             )
-    formatted_text = bos + "\n" + formatted_text if add_bos else formatted_text
-    formatted_text += eos if messages[-1]["role"] == "assistant" else formatted_text
+    
+    formatted_text = bos + "\n" if add_bos else ""
+    formatted_text += f"### Instruction:\n{instruction}\n\n### Input:\n{input_text}\n\n### Response:\n"
+
+    # Only append eos if the last message is from the assistant, though for evaluation it may not be needed.
+    formatted_text += eos if messages[-1]["role"] == "assistant" else ""
+    
     return formatted_text
+
