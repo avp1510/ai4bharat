@@ -151,7 +151,7 @@ def create_prompt_with_alpaca_template(messages, bos="<bos>", eos="<eos>", add_b
     formatted_text += f"### Instruction:\n{instruction}\n\n### Input:\n{input_text}\n\n### Response:\n"
 
     # Only append eos if the last message is from the assistant, though for evaluation it may not be needed.
-    formatted_text += eos if messages[-1]["role"] == "assistant" else ""
+    # formatted_text += eos if messages[-1]["role"] == "assistant" else ""
     
     return formatted_text
 
