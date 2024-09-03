@@ -127,7 +127,7 @@ def create_prompt_with_marathi_gpt_format(messages, bos="<bos>", eos="<eos>", ad
     formatted_text = bos + formatted_text if add_bos else formatted_text
     return formatted_text
 
-def create_prompt_with_alpaca_template(messages, bos="<bos>", eos="<eos>", add_bos=True):
+def create_prompt_with_alpaca_template(messages, bos="<bos>", eos="<eos>", add_bos=False):
     formatted_text = ""
     instruction = ""
     input_text = ""
