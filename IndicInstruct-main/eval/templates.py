@@ -155,3 +155,33 @@ def create_prompt_with_alpaca_template(messages, bos="<bos>", eos="<eos>", add_b
     
     return formatted_text
 
+def create_prompt_with_gemma_chat_format3(messages, bos="<bos>", eos="<eos>", add_bos=True):
+    formatted_text = ""
+    system_message = ""
+    B_TURN, E_TURN = "<start_of_turn>", "<end_of_turn>"
+    
+    for message in messages:
+        if message["role"] == "system":
+            system_message = message["content"]
+        elif message["role"] == "user":
+            if system_message == "":
+                formatted_text += B_TURN + "user\n" + message["content"] + "\n" + E_TURN + "\n"
+            else:
+                formatted_text += B_TURN + "user\n" + system_message + "\n\n" + message["content"] + "\n" + E_TURN + "\n"
+        elif message["role"] == "assistant":
+            formatted_text += B_TURN + "model\n" + message["content"].strip() + E_TURN + "\n"
+        else:
+            raise ValueError(
+                "Gemma chat template only supports 'system', 'user' and 'assistant' roles. Invalid role: {}.".format(
+                    message["role"]
+                )
+            )
+
+    # If the last message is from the assistant, we add "<start_of_turn>model" without EOS and E_TURN.
+    if messages[-1]["role"] == "assistant":
+        formatted_text = formatted_text[: -len(E_TURN+eos+"\n")] + B_TURN + "model"
+    else:
+        # Add BOS at the beginning if required
+        formatted_text = (bos + formatted_text) if add_bos else formatted_text
+
+    return formatted_text
