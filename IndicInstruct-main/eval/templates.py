@@ -185,3 +185,32 @@ def create_prompt_with_gemma_chat_format3(messages, bos="<bos>", eos="<eos>", ad
         formatted_text = (bos + formatted_text) if add_bos else formatted_text
 
     return formatted_text
+
+
+
+def create_prompt_with_gemma_chat_format4(messages, bos="<bos>", eos="<eos>", add_bos=True):
+    formatted_text = ""
+    system_message = ""
+    B_TURN, E_TURN = "<start_of_turn>", "<end_of_turn>"
+    
+    for message in messages:
+        if message["role"] == "system":
+            system_message = message["content"]
+        elif message["role"] == "user":
+            # Add user message and any system message if it exists
+            formatted_text += B_TURN + "user\n" + message["content"] + E_TURN + "\n"
+        elif message["role"] == "assistant":
+            # Add assistant message, but no E_TURN at the end
+            formatted_text += B_TURN + "model\n" + message["content"].strip()
+        else:
+            raise ValueError(
+                "Gemma chat template only supports 'system', 'user' and 'assistant' roles. Invalid role: {}.".format(
+                    message["role"]
+                )
+            )
+
+    # Add BOS at the beginning if required
+    formatted_text = (bos + formatted_text) if add_bos else formatted_text
+
+    return formatted_text
+
